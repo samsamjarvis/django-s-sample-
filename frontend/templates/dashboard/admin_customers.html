@@ -1,0 +1,30 @@
+{% extends "dashboard/base_admin.html" %}
+{% block title %}مشتریان{% endblock %}
+{% block page_title %}مشتریان{% endblock %}
+{% block content %}
+<div class="filter-bar">
+    <form method="get" style="display:flex;gap:8px;width:100%">
+        <input type="search" name="q" class="form-control" placeholder="جستجو با ایمیل..." value="{{ q }}">
+        <button class="btn btn-primary btn-sm">جستجو</button>
+    </form>
+</div>
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead><tr><th>ایمیل</th><th>نام</th><th>سفارش</th><th>عضویت</th><th></th></tr></thead>
+        <tbody>
+        {% for u in page %}
+        <tr>
+            <td>{{ u.email }}</td>
+            <td>{{ u.full_name }}</td>
+            <td>{{ u.order_count }}</td>
+            <td>{{ u.date_joined|date:"Y/m/d" }}</td>
+            <td><a href="{% url 'dashboard:customer_detail' u.id %}" class="btn btn-outline btn-sm">جزئیات</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">مشتری نیست</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include "dashboard/partials/pagination.html" with page=page %}
+{% endblock %}

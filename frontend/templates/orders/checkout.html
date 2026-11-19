@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}تسویه حساب — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="cart-page">
+    <h1 class="page-title">تسویه حساب</h1>
+
+    <form method="post" class="cart-grid">
+        {% csrf_token %}
+        <div>
+            <div class="cart-items">
+                <h2 style="font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:16px">انتخاب آدرس تحویل</h2>
+                <div class="address-radio-list">
+                    {% for radio in form.address %}
+                    <label class="address-radio">
+                        {{ radio.tag }}
+                        <strong>{{ radio.choice_label.instance.title }} — {{ radio.choice_label.instance.recipient_name }}</strong>
+                        <p>{{ radio.choice_label.instance.province }}، {{ radio.choice_label.instance.city }} — {{ radio.choice_label.instance.full_address }}</p>
+                    </label>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'customers:address_add' %}" class="btn btn-outline btn-sm">+ افزودن آدرس جدید</a>
+
+                <div class="form-group" style="margin-top:24px">
+                    <label class="form-label">یادداشت سفارش (اختیاری)</label>
+                    {{ form.customer_note }}
+                </div>
+            </div>
+        </div>
+
+        <aside class="cart-summary">
+            <h2 style="font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:16px">خلاصه سفارش</h2>
+            <div class="cart-summary__row"><span>تعداد اقلام</span><span>{{ cart.total_quantity }}</span></div>
+            <div class="cart-summary__row"><span>جمع کل</span><span>{{ cart.total_amount|intcomma }} تومان</span></div>
+            <div class="cart-summary__total"><span>مبلغ قابل پرداخت</span><span>{{ cart.total_amount|intcomma }} تومان</span></div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px">ثبت و پرداخت</button>
+            <a href="{% url 'cart:view' %}" class="btn btn-outline btn-block" style="margin-top:8px">بازگشت به سبد</a>
+        </aside>
+    </form>
+</div>
+{% endblock %}

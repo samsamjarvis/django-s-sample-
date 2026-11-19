@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}403 — دسترسی ممنوع{% endblock %}
+{% block content %}
+<section class="error-page">
+    <div>
+        <div class="error-code">403</div>
+        <p class="error-message">دسترسی به این صفحه برای شما مجاز نیست.</p>
+        <a href="{% url 'core:home' %}" class="btn btn-primary">بازگشت به خانه</a>
+    </div>
+</section>
+{% endblock %}

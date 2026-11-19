@@ -1,0 +1,61 @@
+{% load static %}
+<header class="site-header">
+    <div class="header-inner">
+        <!-- لوگو -->
+        <a href="/" class="logo" aria-label="{{ SITE_SETTINGS.site_name|default:SITE_NAME|default:'Silver' }}">
+            {% if SITE_SETTINGS.logo %}
+                <span class="logo-icon">
+                    <img src="{{ SITE_SETTINGS.logo_url }}" alt="{{ SITE_SETTINGS.site_name|default:SITE_NAME|default:'Silver' }}" class="logo-img" loading="eager">
+                </span>
+            {% else %}
+                <span class="logo-mark">◈</span>
+            {% endif %}
+            <span class="logo-text">{{ SITE_SETTINGS.site_name|default:SITE_NAME|default:"Silver" }}</span>
+        </a>
+
+        <!-- منوی دسکتاپ -->
+        <nav class="main-nav" aria-label="ناوبری اصلی">
+            <a href="/" class="{% if current_path == '/' %}active{% endif %}">خانه</a>
+            <a href="/products/" class="{% if '/products/' in current_path %}active{% endif %}">محصولات</a>
+            <a href="/about/" class="{% if '/about/' in current_path %}active{% endif %}">درباره ما</a>
+            <a href="/faq/" class="{% if '/faq/' in current_path %}active{% endif %}">سوالات</a>
+            <a href="/contact/" class="{% if '/contact/' in current_path %}active{% endif %}">تماس</a>
+        </nav>
+
+        <!-- آیکون‌ها -->
+        <div class="header-actions">
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_staff %}
+                <a href="/panel/" class="icon-btn" title="پنل ادمین">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </a>
+                {% endif %}
+                <a href="/my/" class="icon-btn" title="داشبورد">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </a>
+            {% else %}
+                <a href="/auth/login/" class="icon-btn" title="ورود">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </a>
+            {% endif %}
+
+            <a href="/cart/" class="icon-btn" title="سبد خرید">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+            </a>
+
+            <button class="mobile-menu-btn" type="button" aria-label="منو" data-mobile-menu-toggle>
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- منوی موبایل -->
+    <nav class="mobile-nav" aria-label="ناوبری موبایل" data-mobile-menu>
+        <a href="/">خانه</a>
+        <a href="/products/">محصولات</a>
+        <a href="/about/">درباره ما</a>
+        <a href="/faq/">سوالات</a>
+        <a href="/contact/">تماس</a>
+    </nav>
+</header>

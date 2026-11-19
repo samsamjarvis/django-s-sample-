@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}پنل ادمین{% endblock %} — {{ SITE_NAME }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="admin">
+<div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="admin-brand">{{ SITE_NAME }} · پنل</div>
+        <nav class="admin-nav">
+            <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">🏠 داشبورد</a>
+            <a href="{% url 'dashboard:product_list' %}" class="{% if 'product' in request.resolver_match.url_name %}active{% endif %}">📦 محصولات</a>
+            <a href="{% url 'dashboard:category_list' %}" class="{% if 'category' in request.resolver_match.url_name %}active{% endif %}">🏷 دسته‌بندی‌ها</a>
+            <a href="{% url 'dashboard:site_settings' %}" class="{% if 'site_settings' in request.resolver_match.url_name or 'settings' in request.resolver_match.url_name %}active{% endif %}">⚙ تنظیمات سایت</a>
+
+            <a href="{% url 'dashboard:order_list' %}" class="{% if 'order' in request.resolver_match.url_name %}active{% endif %}">🛒 سفارش‌ها</a>
+            <a href="{% url 'dashboard:customer_list' %}" class="{% if 'customer' in request.resolver_match.url_name %}active{% endif %}">👥 مشتریان</a>
+            <a href="{% url 'dashboard:inventory_list' %}" class="{% if 'inventory' in request.resolver_match.url_name or 'stock' in request.resolver_match.url_name %}active{% endif %}">📊 انبار</a>
+            <a href="{% url 'dashboard:reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">📈 گزارش‌ها</a>
+            <a href="{% url 'dashboard:sms_log' %}" class="{% if request.resolver_match.url_name == 'sms_log' %}active{% endif %}">📱 پیامک</a>
+            <a href="{% url 'dashboard:audit_log' %}" class="{% if request.resolver_match.url_name == 'audit_log' %}active{% endif %}">🔍 لاگ</a>
+            <a href="{% url 'dashboard:notifications' %}" class="{% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">🔔 اعلان‌ها</a>
+            <div style="border-top:1px solid rgba(255,255,255,.15);margin:12px 0"></div>
+            <a href="{% url 'core:home' %}">🌐 بازگشت به سایت</a>
+            <a href="{% url 'accounts:logout' %}?confirm=1">🚪 خروج</a>
+        </nav>
+    </aside>
+
+    <div class="admin-main-wrapper">
+        <header class="admin-topbar">
+            <div style="display:flex;gap:12px;align-items:center">
+                <button class="admin-menu-btn" onclick="document.getElementById('admin-sidebar').classList.toggle('is-open')" aria-label="منو">☰</button>
+                <h1 class="admin-page-title">{% block page_title %}{% endblock %}</h1>
+            </div>
+            <div class="admin-user">{{ request.user.full_name|default:request.user.email }}</div>
+        </header>
+
+        <main class="admin-main">
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}">
+                    <span>{{ message }}</span>
+                    <button class="alert-close" type="button">×</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+<script src="{% static 'js/admin.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

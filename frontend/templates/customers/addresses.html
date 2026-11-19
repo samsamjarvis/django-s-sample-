@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}آدرس‌های من — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="section-header">
+        <h1 class="section-title">آدرس‌های من</h1>
+        <a href="{% url 'customers:address_add' %}" class="btn btn-primary btn-sm">+ آدرس جدید</a>
+    </div>
+    {% if addresses %}
+    <div class="cart-items">
+        {% for a in addresses %}
+        <div class="cart-item" style="grid-template-columns:1fr auto">
+            <div>
+                <h3>{{ a.title }} {% if a.is_default %}<span class="badge badge-success">پیش‌فرض</span>{% endif %}</h3>
+                <p style="color:var(--text-muted);font-size:.9rem">{{ a.recipient_name }} — {{ a.recipient_phone }}</p>
+                <p style="color:var(--text-muted);font-size:.9rem">{{ a.province }}، {{ a.city }} — {{ a.full_address }}</p>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="{% url 'customers:address_edit' a.id %}" class="btn btn-outline btn-sm">ویرایش</a>
+                <form method="post" action="{% url 'customers:address_delete' a.id %}" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('حذف شود؟')">حذف</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">📍</div>
+        <h3>هنوز آدرسی ثبت نکرده‌اید</h3>
+        <a href="{% url 'customers:address_add' %}" class="btn btn-primary">افزودن آدرس</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

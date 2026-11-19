@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}سبد خرید — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="cart-page">
+    <h1 class="page-title">سبد خرید</h1>
+
+    {% if items %}
+    <div class="cart-grid">
+        <div class="cart-items">
+            {% for item in items %}
+            <div class="cart-item">
+                <div class="cart-item__media">
+                    {% if item.product.main_image %}<img src="{{ item.product.main_image.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}<div style="display:grid;place-items:center;height:100%;opacity:.3">💎</div>{% endif %}
+                </div>
+                <div class="cart-item__info">
+                    <h3><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></h3>
+                    <p style="color:var(--text-muted);font-size:.85rem">{{ item.unit_price|intcomma }} تومان × {{ item.quantity }}</p>
+                    <form method="post" action="{% url 'cart:update' item.id %}" style="display:inline-flex;gap:8px;align-items:center;margin-top:8px">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="20" data-cart-qty style="width:64px;padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);text-align:center">
+                        <button type="submit" class="btn btn-outline btn-sm">به‌روزرسانی</button>
+                    </form>
+                    <form method="post" action="{% url 'cart:remove' item.id %}" style="display:inline;margin-right:8px">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" style="background:none;color:var(--danger);border:none;padding:6px">حذف</button>
+                    </form>
+                </div>
+                <div class="cart-item__price">{{ item.subtotal|intcomma }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <aside class="cart-summary">
+            <h2 style="font-size:1.2rem;font-weight:800;color:var(--primary);margin-bottom:16px">خلاصه سفارش</h2>
+            <div class="cart-summary__row"><span>تعداد اقلام</span><span>{{ cart.total_quantity }}</span></div>
+            <div class="cart-summary__row"><span>جمع کل</span><span>{{ cart.total_amount|intcomma }} تومان</span></div>
+            <div class="cart-summary__total"><span>مبلغ نهایی</span><span>{{ cart.total_amount|intcomma }} تومان</span></div>
+            <a href="{% url 'orders:checkout' %}" class="btn btn-primary btn-block" style="margin-top:16px">ادامه خرید</a>
+            <form method="post" action="{% url 'cart:clear' %}" style="margin-top:12px">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline btn-block" style="color:var(--danger);border-color:var(--danger)">خالی کردن سبد</button>
+            </form>
+        </aside>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">🛒</div>
+        <h3>سبد خرید شما خالی است</h3>
+        <p>محصولات ما را ببینید و چیزی اضافه کنید.</p>
+        <a href="{% url 'products:list' %}" class="btn btn-primary btn-lg">مشاهده محصولات</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

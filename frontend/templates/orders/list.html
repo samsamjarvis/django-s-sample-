@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}سفارش‌های من — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section">
+    <h1 class="section-title">سفارش‌های من</h1>
+    {% if orders %}
+    <div class="admin-table-wrapper" style="margin-top:24px">
+        <table class="admin-table">
+            <thead><tr><th>شماره</th><th>تاریخ</th><th>وضعیت</th><th>مبلغ</th><th></th></tr></thead>
+            <tbody>
+            {% for o in orders %}
+            <tr>
+                <td><strong>{{ o.order_number }}</strong></td>
+                <td>{{ o.created_at|date:"Y/m/d H:i" }}</td>
+                <td><span class="badge badge-{{ o.status }}">{{ o.get_status_display }}</span></td>
+                <td>{{ o.total_amount|intcomma }} ت</td>
+                <td><a href="{% url 'orders:detail' o.order_number %}" class="btn btn-outline btn-sm">مشاهده</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">📦</div>
+        <h3>هنوز سفارشی ثبت نکرده‌اید</h3>
+        <a href="{% url 'products:list' %}" class="btn btn-primary">شروع خرید</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

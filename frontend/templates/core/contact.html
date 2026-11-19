@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}تماس با ما — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card" style="max-width:600px">
+        <h1 class="auth-title">تماس با ما</h1>
+        <p class="auth-subtitle">پیام خود را بفرستید، به‌زودی پاسخ می‌دهیم</p>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block">ارسال پیام</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

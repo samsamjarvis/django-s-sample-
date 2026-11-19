@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}امتیاز وفاداری — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section">
+    <h1 class="section-title">باشگاه مشتریان</h1>
+    <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-card__label">امتیاز شما</div><div class="kpi-card__value">{{ account.points }}</div></div>
+        <div class="kpi-card"><div class="kpi-card__label">سطح</div><div class="kpi-card__value">{{ account.get_tier_display }}</div></div>
+    </div>
+    {% if transactions %}
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead><tr><th>تاریخ</th><th>تغییر</th><th>دلیل</th><th>مرجع</th></tr></thead>
+            <tbody>
+            {% for t in transactions %}
+            <tr><td>{{ t.created_at|date:"Y/m/d" }}</td><td>{{ t.delta }}</td><td>{{ t.reason }}</td><td>{{ t.reference }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

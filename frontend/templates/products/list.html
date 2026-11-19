@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}محصولات — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section">
+    <h1 class="section-title">همه محصولات</h1>
+    <p class="section-subtitle">مجموعه کامل نقره</p>
+
+    <form method="get" class="filter-bar" style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap">
+        <input type="search" name="q" class="form-control" placeholder="جستجو..." value="{{ q }}" style="max-width:320px">
+        <select name="sort" class="form-control" style="max-width:200px" onchange="this.form.submit()">
+            <option value="newest" {% if sort == "newest" %}selected{% endif %}>جدیدترین</option>
+            <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>ارزان‌ترین</option>
+            <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>گران‌ترین</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">فیلتر</button>
+    </form>
+
+    {% if page.object_list %}
+    <div class="product-grid">
+        {% for product in page %}{% include "products/_card.html" %}{% endfor %}
+    </div>
+    {% include "dashboard/partials/pagination.html" with page=page %}
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">🔍</div>
+        <h3>محصولی یافت نشد</h3>
+        <p>فیلترها را تغییر دهید یا همه محصولات را ببینید.</p>
+        <a href="{% url 'products:list' %}" class="btn btn-primary">همه محصولات</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

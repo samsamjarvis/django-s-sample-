@@ -1,0 +1,37 @@
+{% extends "dashboard/base_admin.html" %}
+{% load humanize %}
+{% block title %}سفارش‌ها{% endblock %}
+{% block page_title %}سفارش‌ها{% endblock %}
+{% block content %}
+<div class="filter-bar">
+    <form method="get" style="display:flex;gap:8px;width:100%">
+        <select name="status" class="form-control" onchange="this.form.submit()">
+            <option value="">همه وضعیت‌ها</option>
+            {% for val, lbl in status_choices %}
+            <option value="{{ val }}" {% if status == val %}selected{% endif %}>{{ lbl }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead><tr><th>شماره</th><th>مشتری</th><th>وضعیت</th><th>پرداخت</th><th>مبلغ</th><th>تاریخ</th><th></th></tr></thead>
+        <tbody>
+        {% for o in page %}
+        <tr>
+            <td><strong>{{ o.order_number }}</strong></td>
+            <td>{{ o.user.email }}</td>
+            <td><span class="badge badge-{{ o.status }}">{{ o.get_status_display }}</span></td>
+            <td><span class="badge badge-{% if o.payment_status == 'paid' %}success{% else %}pending{% endif %}">{{ o.get_payment_status_display }}</span></td>
+            <td>{{ o.total_amount|intcomma }}</td>
+            <td>{{ o.created_at|date:"Y/m/d" }}</td>
+            <td><a href="{% url 'dashboard:order_detail' o.id %}" class="btn btn-outline btn-sm">جزئیات</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px">سفارشی نیست</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include "dashboard/partials/pagination.html" with page=page %}
+{% endblock %}

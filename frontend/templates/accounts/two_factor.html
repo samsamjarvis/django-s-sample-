@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}کد تأیید — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1 class="auth-title">کد تأیید</h1>
+        <p class="auth-subtitle">کد ۵ رقمی پیامک‌شده را وارد کنید</p>
+        {% if error %}<div class="alert alert-error" style="margin-bottom:16px">{{ error }}</div>{% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">کد پیامک</label>
+                {{ form.code }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">تأیید</button>
+        </form>
+        <div class="auth-footer">
+            <a href="{% url 'accounts:login' %}">بازگشت به ورود</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

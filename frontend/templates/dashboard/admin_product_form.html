@@ -1,0 +1,190 @@
+{% extends "dashboard/base_admin.html" %}
+{% block title %}{% if product %}ویرایش محصول{% else %}محصول جدید{% endif %}{% endblock %}
+{% block page_title %}{% if product %}ویرایش محصول{% else %}محصول جدید{% endif %}{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" id="product-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-error" style="margin-bottom:16px">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+
+    <div class="product-form-grid">
+
+        <div>
+            <div class="admin-card">
+                <h2 class="admin-card__title">اطلاعات اصلی</h2>
+                <div class="form-group">
+                    <label class="form-label">دسته‌بندی</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}<p style="color:#dc2626;font-size:.82rem;margin-top:4px">{{ form.category.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">نام محصول</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<p style="color:#dc2626;font-size:.82rem;margin-top:4px">{{ form.name.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Slug (اختیاری)</label>
+                    {{ form.slug }}
+                    <small style="color:#6b7280;font-size:.78rem">اگر خالی باشد از نام ساخته می‌شود</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">توضیح کوتاه</label>
+                    {{ form.short_description }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">توضیح کامل</label>
+                    {{ form.description }}
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2 class="admin-card__title">قیمت و مشخصات</h2>
+                <div class="form-group">
+                    <label class="form-label">قیمت (تومان)</label>
+                    {{ form.price }}
+                    {% if form.price.errors %}<p style="color:#dc2626;font-size:.82rem;margin-top:4px">{{ form.price.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">قیمت با تخفیف (تومان — اختیاری)</label>
+                    {{ form.discount_price }}
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <div class="form-group">
+                        <label class="form-label">وزن (گرم)</label>
+                        {{ form.weight_grams }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">جنس</label>
+                        {{ form.material }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2 class="admin-card__title">SEO (اختیاری)</h2>
+                <div class="form-group">
+                    <label class="form-label">عنوان SEO</label>
+                    {{ form.seo_title }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">توضیح SEO</label>
+                    {{ form.seo_description }}
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="admin-card">
+                <h2 class="admin-card__title">وضعیت</h2>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">{{ form.is_active }} <span>فعال</span></label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">{{ form.is_featured }} <span>ویژه (صفحه اصلی)</span></label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">{{ form.is_new }} <span>جدید</span></label>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2 class="admin-card__title">تصاویر محصول</h2>
+
+                {% if images %}
+                <div class="image-grid" id="existing-images">
+                    {% for img in images %}
+                    <div class="image-card {% if img.is_main %}is-main{% endif %}" data-img-id="{{ img.id }}">
+                        <img src="{{ img.image.url }}" alt="{{ img.alt_text }}">
+                        {% if img.is_main %}<span class="image-badge">اصلی</span>{% endif %}
+                        <div class="image-actions">
+                            {% if not img.is_main %}
+                            <button type="button" class="btn btn-sm btn-outline" onclick="setMainImage({{ img.id }})">اصلی کن</button>
+                            {% endif %}
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteImage({{ img.id }})">حذف</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="color:#6b7280;font-size:.85rem;margin-bottom:12px">هنوز تصویری برای این محصول آپلود نشده.</p>
+                {% endif %}
+
+                <div class="form-group" style="margin-top:16px">
+                    <label class="form-label" for="new-images-input">افزودن تصاویر جدید</label>
+                    <input type="file" name="new_images" id="new-images-input"
+                           multiple accept="image/*"
+                           style="width:100%;padding:10px;border:1.5px dashed #c9b78a;border-radius:8px;background:#fafaf8;cursor:pointer">
+                    <small style="color:#6b7280;font-size:.78rem;display:block;margin-top:6px">
+                        می‌توانی چند عکس همزمان انتخاب کنی. اولین عکس اگر عکس اصلی نداشته باشی، اصلی می‌شود.
+                    </small>
+                </div>
+
+                <div class="image-grid" id="new-images-preview" style="margin-top:12px"></div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:24px;flex-wrap:wrap">
+        <button type="submit" class="btn btn-primary">ذخیره</button>
+        <a href="{% url 'dashboard:product_list' %}" class="btn btn-outline">انصراف</a>
+        {% if product %}
+        <a href="{{ product.get_absolute_url }}" target="_blank" class="btn btn-outline" style="margin-right:auto">مشاهده در سایت ↗</a>
+        {% endif %}
+    </div>
+</form>
+
+<form id="delete-image-form" method="post" style="display:none">{% csrf_token %}</form>
+<form id="setmain-image-form" method="post" style="display:none">{% csrf_token %}</form>
+
+<style>
+.product-form-grid { display:grid; grid-template-columns:2fr 1fr; gap:20px; }
+@media (max-width:900px) { .product-form-grid { grid-template-columns:1fr; } }
+.image-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+.image-card { position:relative; border-radius:10px; overflow:hidden; border:2px solid #e5e7eb; background:#f5f1ea; transition:border-color .2s, box-shadow .2s; }
+.image-card:hover { box-shadow:0 4px 12px rgba(0,0,0,.1); }
+.image-card.is-main { border-color:#0e4d49; box-shadow:0 0 0 3px rgba(14,77,73,.15); }
+.image-card img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+.image-badge { position:absolute; top:6px; right:6px; background:#0e4d49; color:#fff; font-size:.68rem; padding:2px 8px; border-radius:999px; font-weight:700; }
+.image-actions { display:flex; flex-direction:column; gap:4px; padding:6px; }
+.image-actions .btn { width:100%; font-size:.72rem; padding:4px 6px; }
+</style>
+
+<script>
+(function() {
+    const input = document.getElementById("new-images-input");
+    const preview = document.getElementById("new-images-preview");
+    if (input && preview) {
+        input.addEventListener("change", function() {
+            preview.innerHTML = "";
+            Array.from(this.files).forEach((file) => {
+                if (!file.type.startsWith("image/")) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const div = document.createElement("div");
+                    div.className = "image-card";
+                    div.innerHTML = `<img src="${e.target.result}" alt=""><span class="image-badge">جدید</span>`;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    }
+
+    window.setMainImage = function(imgId) {
+        {% if product %}
+        const form = document.getElementById("setmain-image-form");
+        form.action = "{% url 'dashboard:product_image_set_main' product.id 0 %}".replace("/0/", "/" + imgId + "/");
+        form.submit();
+        {% endif %}
+    };
+
+    window.deleteImage = function(imgId) {
+        if (!confirm("این تصویر حذف شود؟")) return;
+        {% if product %}
+        const form = document.getElementById("delete-image-form");
+        form.action = "{% url 'dashboard:product_image_delete' product.id 0 %}".replace("/0/", "/" + imgId + "/");
+        form.submit();
+        {% endif %}
+    };
+})();
+</script>
+{% endblock %}

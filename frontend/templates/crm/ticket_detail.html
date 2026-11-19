@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}تیکت {{ ticket.id }} — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="section-header">
+        <h1 class="section-title">{{ ticket.subject }}</h1>
+        <span class="badge badge-{% if ticket.status == 'open' %}pending{% elif ticket.status == 'closed' %}delivered{% else %}processing{% endif %}">{{ ticket.get_status_display }}</span>
+    </div>
+
+    <div class="cart-items" style="margin-bottom:24px">
+        {% for m in messages_qs %}
+        <div style="padding:16px;border-bottom:1px solid var(--border)">
+            <p style="font-weight:700;color:var(--primary);margin-bottom:6px">{{ m.author.full_name|default:m.author.email }}</p>
+            <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:8px">{{ m.created_at|date:"Y/m/d H:i" }}</p>
+            <p>{{ m.body|linebreaksbr }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if ticket.status != "closed" %}
+    <form method="post" class="cart-items">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label">پاسخ شما</label>
+            {{ form.body }}
+        </div>
+        <button type="submit" class="btn btn-primary">ارسال پاسخ</button>
+    </form>
+    {% endif %}
+</section>
+{% endblock %}

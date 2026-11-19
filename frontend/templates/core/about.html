@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}درباره ما — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section" style="max-width:900px">
+    <h1 class="section-title">درباره ما</h1>
+    {% if page %}{{ page.content|linebreaks }}{% else %}
+    <p style="color:var(--text-muted);line-height:2">Silver فروشگاه آنلاین نقره — با سال‌ها تجربه در عرضه نقره، اصالت و کیفیت را تضمین می‌کنیم.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Silver — ارسال به سراسر ایران{% endblock %}
+
+{% block content %}
+
+<!-- ═══ ۱) Hero ═══ -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-content">
+            <h1>ارسال به سراسر ایران</h1>
+            <a href="/products/" class="btn btn-accent">مشاهده محصولات</a>
+        </div>
+        <div class="hero-media">
+                {% if SITE_SETTINGS.hero_image %}
+                    <img src="{{ SITE_SETTINGS.hero_image_url }}"
+                         alt="{{ SITE_SETTINGS.hero_title|default:'Silver' }}"
+                         loading="eager">
+                {% else %}
+                    <div class="hero-placeholder">
+                        <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="100" cy="100" r="40"/>
+                            <circle cx="100" cy="100" r="58" opacity=".5"/>
+                            <circle cx="100" cy="100" r="76" opacity=".25"/>
+                        </svg>
+                    </div>
+                {% endif %}
+            </div>
+    </div>
+</section>
+
+<!-- ═══ ۲) Categories ═══ -->
+<section class="categories-section">
+    <h2 class="categories-title">دسته‌بندی محصولات</h2>
+    <div class="categories-scroller">
+        {% if categories %}
+            {% for cat in categories %}
+            <a href="{{ cat.get_absolute_url }}" class="cat-item">
+                <div class="cat-circle">
+                    {% if cat.image %}<img src="{{ cat.image.url }}" alt="{{ cat.name }}" loading="lazy">
+                    {% else %}{{ cat.name|truncatechars:10 }}{% endif %}
+                </div>
+                <span class="cat-label">{{ cat.name }}</span>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="cat-item"><div class="cat-circle">زنجیر</div><span class="cat-label">زنجیر</span></div>
+            <div class="cat-item"><div class="cat-circle">انگشتر</div><span class="cat-label">انگشتر</span></div>
+            <div class="cat-item"><div class="cat-circle">دستبند</div><span class="cat-label">دستبند</span></div>
+            <div class="cat-item"><div class="cat-circle">ساعت</div><span class="cat-label">ساعت</span></div>
+            <div class="cat-item"><div class="cat-circle">سکه</div><span class="cat-label">سکه نقره</span></div>
+            <div class="cat-item"><div class="cat-circle">حلقه</div><span class="cat-label">حلقه</span></div>
+            <div class="cat-item"><div class="cat-circle">النگو</div><span class="cat-label">النگو</span></div>
+            <div class="cat-item"><div class="cat-circle">گردنبند</div><span class="cat-label">گردنبند</span></div>
+            <div class="cat-item"><div class="cat-circle">گوشواره</div><span class="cat-label">گوشواره</span></div>
+            <div class="cat-item"><div class="cat-circle">ست</div><span class="cat-label">ست نقره</span></div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ═══ ۳) Featured — «جدیدترین محصولات» ═══ -->
+<section class="featured-section">
+    <h2 class="section-title">جدیدترین محصولات</h2>
+    <p class="section-subtitle">تازه‌ترین محصول نقرهٔ ما</p>
+
+    {% if featured_products %}
+        {% with feat=featured_products.0 %}
+        <div class="featured-showcase">
+            <div class="featured-media">
+                {% if feat.main_image_safe %}
+                    <img src="{{ feat.main_image_safe.image.url }}" alt="{{ feat.name }}" loading="lazy">
+                {% else %}
+                    <div class="featured-placeholder">
+                        <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M40 100 Q100 20 160 100 Q100 180 40 100"/>
+                        </svg>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="featured-content">
+                <h3>{{ feat.name }}</h3>
+                {% if feat.short_description %}<p class="featured-desc">{{ feat.short_description }}</p>{% endif %}
+                <p class="featured-price">{{ feat.final_price|intcomma }} تومان</p>
+                <a href="{{ feat.get_absolute_url }}" class="btn btn-primary">مشاهده محصول</a>
+            </div>
+        </div>
+        {% endwith %}
+    {% else %}
+        <div class="featured-showcase">
+            <div class="featured-media">
+                <div class="featured-placeholder">
+                    <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M40 100 Q100 20 160 100 Q100 180 40 100"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="featured-content">
+                <h3>گردنبند مدل ۲۵/۷۳ کرم</h3>
+                <p class="featured-desc">طراحی شده با ظرافت، ساخته شده از نقرهٔ اصیل</p>
+                <p class="featured-price">۸,۵۰۰,۰۰۰ تومان</p>
+                <a href="/products/" class="btn btn-primary">مشاهده محصولات</a>
+            </div>
+        </div>
+    {% endif %}
+</section>
+
+<!-- ═══ ۴) FAQ ═══ -->
+<section class="faq-section">
+    <h2 class="section-title">سوالات مهم و پرتکرار</h2>
+    <p class="section-subtitle">
+        پاسخ سوالات خود در زمینه خرید نقره، آموزش، مشاوره و سرمایه‌گذاری را در این بخش پیدا کنید.
+    </p>
+
+    <div class="faq-list">
+        {% if faqs %}
+            {% for faq in faqs %}
+            <details class="faq-item">
+                <summary>{{ faq.question }}</summary>
+                <div class="faq-answer">{{ faq.answer|linebreaksbr }}</div>
+            </details>
+            {% endfor %}
+        {% else %}
+            <details class="faq-item">
+                <summary>آیا محصول خریداری شده بعد از مدتی قابل فروش و تعویض است؟</summary>
+                <div class="faq-answer">بله، تا ۷ روز پس از خرید، شرایط تعویض فراهم است.</div>
+            </details>
+            <details class="faq-item">
+                <summary>محصولات با عکس واقعی به فروش می‌رسند یا خیر؟</summary>
+                <div class="faq-answer">بله، تمام عکس‌ها از محصولات اصلی گرفته شده‌اند.</div>
+            </details>
+            <details class="faq-item">
+                <summary>ماندگاری رنگ محصولات به چه صورت می‌باشد؟</summary>
+                <div class="faq-answer">محصولات ما با پوشش‌های مخصوص، ماندگاری طولانی دارند.</div>
+            </details>
+            <details class="faq-item">
+                <summary>آیا سرمایه‌گذاری روی خرید ساچمه نقره مناسب است؟</summary>
+                <div class="faq-answer">نقره به‌عنوان فلز گران‌بها، گزینه‌ای مطمئن برای سرمایه‌گذاری است.</div>
+            </details>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

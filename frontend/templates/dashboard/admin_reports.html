@@ -1,0 +1,23 @@
+{% extends "dashboard/base_admin.html" %}
+{% load humanize %}
+{% block title %}گزارش‌ها{% endblock %}
+{% block page_title %}گزارش ۳۰ روز{% endblock %}
+{% block content %}
+<div class="kpi-grid">
+    {% include "dashboard/partials/kpi_card.html" with label="درآمد ۳۰ روز" value=revenue|intcomma hint="تومان" %}
+</div>
+<div class="admin-card">
+    <h2 class="admin-card__title">هزینه‌ها</h2>
+    <table class="admin-table">
+        <thead><tr><th>دسته</th><th>جمع</th></tr></thead>
+        <tbody>{% for e in expenses %}<tr><td>{{ e.category }}</td><td>{{ e.total|intcomma }}</td></tr>{% empty %}<tr><td colspan="2" style="text-align:center;color:var(--text-muted)">—</td></tr>{% endfor %}</tbody>
+    </table>
+</div>
+<div class="admin-card">
+    <h2 class="admin-card__title">خریدها</h2>
+    <table class="admin-table">
+        <thead><tr><th>تأمین‌کننده</th><th>جمع</th></tr></thead>
+        <tbody>{% for p in purchases %}<tr><td>{{ p.supplier__name }}</td><td>{{ p.total|intcomma }}</td></tr>{% empty %}<tr><td colspan="2" style="text-align:center;color:var(--text-muted)">—</td></tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% endblock %}

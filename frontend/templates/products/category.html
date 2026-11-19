@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }} — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section">
+    <h1 class="section-title">{{ category.name }}</h1>
+    {% if category.description %}<p class="section-subtitle">{{ category.description }}</p>{% endif %}
+
+    {% if children %}
+    <div style="margin-bottom:32px;display:flex;gap:12px;flex-wrap:wrap">
+        {% for c in children %}
+        <a href="{% url 'products:category' c.slug %}" class="btn btn-outline btn-sm">{{ c.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if page.object_list %}
+    <div class="product-grid">
+        {% for product in page %}{% include "products/_card.html" %}{% endfor %}
+    </div>
+    {% include "dashboard/partials/pagination.html" with page=page %}
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">💎</div>
+        <h3>هنوز محصولی در این دسته نیست</h3>
+        <a href="{% url 'products:list' %}" class="btn btn-primary">همه محصولات</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

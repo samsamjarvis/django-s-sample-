@@ -1,0 +1,46 @@
+{% extends "dashboard/base_admin.html" %}
+{% load humanize %}
+{% block title %}سفارش {{ order.order_number }}{% endblock %}
+{% block page_title %}سفارش {{ order.order_number }}{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:24px" class="admin-order-grid">
+    <div class="admin-card">
+        <h2 class="admin-card__title">اقلام</h2>
+        <table class="admin-table">
+            <thead><tr><th>محصول</th><th>قیمت</th><th>تعداد</th><th>جمع</th></tr></thead>
+            <tbody>
+            {% for item in order.items.all %}
+            <tr><td>{{ item.product_name }}</td><td>{{ item.unit_price|intcomma }}</td><td>{{ item.quantity }}</td><td>{{ item.subtotal|intcomma }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 class="admin-card__title" style="margin-top:24px">تاریخچه</h2>
+        {% for h in order.status_history.all %}
+        <div style="padding:10px 0;border-bottom:1px dashed var(--border);font-size:.9rem">
+            <strong>{{ h.to_status }}</strong> — {{ h.created_at|date:"Y/m/d H:i" }}
+            {% if h.note %} — <span style="color:var(--text-muted)">{{ h.note }}</span>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="admin-card">
+        <h2 class="admin-card__title">اطلاعات</h2>
+        <p><strong>مشتری:</strong> {{ order.user.email }}</p>
+        <p><strong>گیرنده:</strong> {{ order.shipping_full_name }}</p>
+        <p><strong>تلفن:</strong> {{ order.shipping_phone }}</p>
+        <p><strong>آدرس:</strong> {{ order.shipping_province }}، {{ order.shipping_city }} — {{ order.shipping_address }}</p>
+        <p style="margin-top:16px"><strong>وضعیت:</strong> <span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></p>
+        <p><strong>پرداخت:</strong> <span class="badge badge-{% if order.payment_status == 'paid' %}success{% else %}pending{% endif %}">{{ order.get_payment_status_display }}</span></p>
+        <p style="margin-top:16px;font-size:1.2rem;font-weight:800;color:var(--primary)">{{ order.total_amount|intcomma }} ت</p>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">
+            {% if order.status == "paid" %}<form method="post" action="{% url 'dashboard:order_action' order.id 'processing' %}">{% csrf_token %}<button class="btn btn-primary btn-block">در حال آماده‌سازی</button></form>{% endif %}
+            {% if order.status == "processing" %}<form method="post" action="{% url 'dashboard:order_action' order.id 'shipped' %}">{% csrf_token %}<button class="btn btn-primary btn-block">ارسال شد</button></form>{% endif %}
+            {% if order.status == "shipped" %}<form method="post" action="{% url 'dashboard:order_action' order.id 'delivered' %}">{% csrf_token %}<button class="btn btn-primary btn-block">تحویل شد</button></form>{% endif %}
+            {% if order.is_cancelable %}<form method="post" action="{% url 'dashboard:order_action' order.id 'cancel' %}">{% csrf_token %}<button class="btn btn-danger btn-block" onclick="return confirm('لغو شود؟')">لغو سفارش</button></form>{% endif %}
+        </div>
+    </div>
+</div>
+<style>@media(max-width:900px){.admin-order-grid{grid-template-columns:1fr!important}}</style>
+{% endblock %}

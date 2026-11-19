@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}{{ product.name }} — {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ product.short_description|default:product.name }}{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <div class="product-detail__grid">
+        <div class="product-gallery">
+            <div class="product-gallery__main">
+                {% if product.main_image %}
+                <img src="{{ product.main_image.image.url }}" alt="{{ product.name }}">
+                {% else %}<div style="width:100%;height:100%;display:grid;place-items:center;font-size:5rem;opacity:.3">💎</div>{% endif %}
+            </div>
+            {% if product.images.count > 1 %}
+            <div class="product-gallery__thumbs">
+                {% for img in product.images.all %}
+                <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" class="{% if forloop.first %}active{% endif %}">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            {% if product.short_description %}
+            <p style="color:var(--text-muted);font-size:1.05rem">{{ product.short_description }}</p>
+            {% endif %}
+
+            <div class="price-block">
+                <span class="price-current-lg">{{ product.final_price|intcomma }} تومان</span>
+                {% if product.is_discounted %}
+                <span class="price-old-lg">{{ product.price|intcomma }}</span>
+                {% endif %}
+            </div>
+
+            <dl class="product-meta">
+                <div class="product-meta__row">
+                    <dt>دسته‌بندی</dt>
+                    <dd><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></dd>
+                </div>
+                {% if product.material %}
+                <div class="product-meta__row"><dt>جنس</dt><dd>{{ product.material }}</dd></div>
+                {% endif %}
+                {% if product.weight_grams %}
+                <div class="product-meta__row"><dt>وزن</dt><dd>{{ product.weight_grams }} گرم</dd></div>
+                {% endif %}
+            </dl>
+
+            {% if product.description %}
+            <div style="margin:24px 0;line-height:1.9;color:var(--text-muted)">{{ product.description|linebreaksbr }}</div>
+            {% endif %}
+
+            <form method="post" action="{% url 'cart:add' %}" class="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="number" name="quantity" value="1" min="1" max="20" aria-label="تعداد">
+                <button type="submit" class="btn btn-primary btn-lg">افزودن به سبد</button>
+            </form>
+        </div>
+    </div>
+
+    {% if related %}
+    <section style="margin-top:64px">
+        <h2 class="section-title">محصولات مرتبط</h2>
+        <div class="product-grid">
+            {% for product in related %}{% include "products/_card.html" %}{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</section>
+{% endblock %}

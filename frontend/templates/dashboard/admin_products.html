@@ -1,0 +1,64 @@
+{% extends "dashboard/base_admin.html" %}
+{% load humanize %}
+{% block title %}محصولات{% endblock %}
+{% block page_title %}محصولات{% endblock %}
+
+{% block content %}
+<div class="filter-bar" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <form method="get" style="display:flex;gap:8px;flex:1;min-width:200px">
+        <input type="search" name="q" class="form-control" placeholder="جستجو..." value="{{ q }}">
+        <button class="btn btn-primary btn-sm">جستجو</button>
+    </form>
+    <a href="{% url 'dashboard:product_create' %}" class="btn btn-accent btn-sm">+ محصول جدید</a>
+</div>
+
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th style="width:60px"></th>
+                <th>نام</th>
+                <th>دسته</th>
+                <th>قیمت</th>
+                <th>وضعیت</th>
+                <th>ویژه</th>
+                <th>جدید</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for p in page %}
+            <tr>
+                <td>
+                    {% with main=p.main_image %}
+                    {% if main %}
+                        <img src="{{ main.image.url }}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:6px">
+                    {% else %}
+                        <div style="width:48px;height:48px;display:grid;place-items:center;background:#f5f1ea;border-radius:6px;font-size:1.2rem;opacity:.4">💎</div>
+                    {% endif %}
+                    {% endwith %}
+                </td>
+                <td><strong>{{ p.name }}</strong></td>
+                <td>{{ p.category.name }}</td>
+                <td>{{ p.final_price|intcomma }}</td>
+                <td>
+                    {% if p.is_active %}<span class="badge badge-success">فعال</span>
+                    {% else %}<span class="badge badge-canceled">غیرفعال</span>{% endif %}
+                </td>
+                <td>{% if p.is_featured %}⭐{% endif %}</td>
+                <td>{% if p.is_new %}🆕{% endif %}</td>
+                <td><a href="{% url 'dashboard:product_edit' p.id %}" class="btn btn-outline btn-sm">ویرایش</a></td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="8" style="text-align:center;padding:40px;color:#6b7280">
+                    هیچ محصولی نیست. <a href="{% url 'dashboard:product_create' %}" style="color:#0e4d49;font-weight:700">اولین محصول را بساز</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include "dashboard/partials/pagination.html" with page=page %}
+{% endblock %}

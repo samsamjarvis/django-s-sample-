@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}سوالات پرتکرار — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="faq-section">
+    <h1 class="section-title">سوالات مهم و پرتکرار</h1>
+    <div class="faq-list" style="margin-top:32px">
+        {% for faq in faqs %}
+        <details class="faq-item">
+            <summary>{{ faq.question }}</summary>
+            <div class="faq-answer">{{ faq.answer|linebreaksbr }}</div>
+        </details>
+        {% empty %}
+        <div class="empty-state"><div class="empty-state__icon">❓</div><h3>سوالی ثبت نشده</h3></div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

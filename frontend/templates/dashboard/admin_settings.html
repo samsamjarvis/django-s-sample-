@@ -1,0 +1,138 @@
+{% extends "dashboard/base_admin.html" %}
+{% block title %}تنظیمات سایت{% endblock %}
+{% block page_title %}تنظیمات سایت{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-error" style="margin-bottom:16px">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <!-- ستون ۱: برند + تماس -->
+        <div>
+            <div class="admin-card">
+                <h2 class="admin-card__title">برند</h2>
+                <div class="form-group">
+                    <label class="form-label">نام سایت</label>
+                    {{ form.site_name }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">شعار</label>
+                    {{ form.tagline }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">لوگو</label>
+                    {% if settings_obj.logo %}
+                    <div style="margin-bottom:8px">
+                        <img src="{{ settings_obj.logo_url }}" alt="logo" style="max-width:200px;max-height:80px;padding:8px;background:#0e4d49;border-radius:8px">
+                    </div>
+                    {% endif %}
+                    <input type="file" name="logo" id="id_logo" accept="image/*"
+                           style="width:100%;padding:10px;border:1.5px dashed #c9b78a;border-radius:8px;background:#fafaf8;cursor:pointer">
+                    <small style="color:#6b7280;font-size:.78rem;display:block;margin-top:6px">
+                        PNG شفاف توصیه می‌شود (تا ارتفاع ۵۰px در هدر)
+                    </small>
+                    {% if form.logo.errors %}<p style="color:#dc2626;font-size:.82rem">{{ form.logo.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Favicon</label>
+                    {% if settings_obj.favicon %}
+                    <div style="margin-bottom:8px">
+                        <img src="{{ settings_obj.favicon.url }}" alt="favicon" style="width:32px;height:32px">
+                    </div>
+                    {% endif %}
+                    <input type="file" name="favicon" id="id_favicon" accept="image/*"
+                           style="width:100%;padding:10px;border:1.5px dashed #c9b78a;border-radius:8px;background:#fafaf8;cursor:pointer">
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2 class="admin-card__title">تماس</h2>
+                <div class="form-group">
+                    <label class="form-label">تلفن</label>
+                    {{ form.phone }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ایمیل</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">آدرس</label>
+                    {{ form.address }}
+                </div>
+            </div>
+        </div>
+
+        <!-- ستون ۲: Hero + اجتماعی + درگاه -->
+        <div>
+            <div class="admin-card">
+                <h2 class="admin-card__title">Hero صفحه اصلی</h2>
+                <div class="form-group">
+                    <label class="form-label">عکس Hero</label>
+                    {% if settings_obj.hero_image %}
+                    <div style="margin-bottom:8px">
+                        <img src="{{ settings_obj.hero_image_url }}" alt="hero" style="max-width:100%;max-height:240px;border-radius:12px;border:1px solid #ddd">
+                    </div>
+                    {% else %}
+                    <div style="margin-bottom:8px;padding:20px;background:#f5f1ea;border-radius:12px;text-align:center;color:#9ca3af;font-size:.85rem">
+                        هنوز عکسی آپلود نشده — placeholder SVG نمایش داده می‌شود
+                    </div>
+                    {% endif %}
+                    <input type="file" name="hero_image" id="id_hero_image" accept="image/*"
+                           style="width:100%;padding:10px;border:1.5px dashed #c9b78a;border-radius:8px;background:#fafaf8;cursor:pointer">
+                    <small style="color:#6b7280;font-size:.78rem;display:block;margin-top:6px">
+                        عکس بزرگ دست با انگشتر — بالای صفحه اصلی
+                    </small>
+                    {% if form.hero_image.errors %}<p style="color:#dc2626;font-size:.82rem">{{ form.hero_image.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">عنوان Hero</label>
+                    {{ form.hero_title }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">زیرعنوان Hero</label>
+                    {{ form.hero_subtitle }}
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2 class="admin-card__title">شبکه‌های اجتماعی</h2>
+                <div class="form-group">
+                    <label class="form-label">Instagram</label>
+                    {{ form.instagram }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telegram</label>
+                    {{ form.telegram }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">WhatsApp</label>
+                    {{ form.whatsapp }}
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2 class="admin-card__title">درگاه و پیامک</h2>
+                <div class="form-group">
+                    <label class="form-label">Merchant ID زرین‌پال</label>
+                    {{ form.zarinpal_merchant_id }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">خط پیامک sms.ir</label>
+                    {{ form.sms_ir_line }}
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                    {{ form.maintenance_mode }} <span>حالت تعمیرات</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:24px">
+        <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+        <a href="{% url 'dashboard:home' %}" class="btn btn-outline">انصراف</a>
+    </div>
+</form>
+{% endblock %}

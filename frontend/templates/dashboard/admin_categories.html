@@ -1,0 +1,52 @@
+{% extends "dashboard/base_admin.html" %}
+{% block title %}دسته‌بندی‌ها{% endblock %}
+{% block page_title %}دسته‌بندی‌ها{% endblock %}
+{% block content %}
+<div class="filter-bar" style="margin-bottom:16px">
+    <a href="{% url 'dashboard:category_create' %}" class="btn btn-accent btn-sm">+ دسته‌بندی جدید</a>
+</div>
+
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th style="width:60px"></th>
+                <th>نام</th>
+                <th>والد</th>
+                <th>تعداد محصول</th>
+                <th>ترتیب</th>
+                <th>وضعیت</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cat in categories %}
+            <tr>
+                <td>
+                    {% if cat.image %}
+                        <img src="{{ cat.image.url }}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:50%">
+                    {% else %}
+                        <div style="width:48px;height:48px;display:grid;place-items:center;background:#f5f1ea;border-radius:50%;font-size:.7rem;color:#9ca3af">بدون</div>
+                    {% endif %}
+                </td>
+                <td><strong>{{ cat.name }}</strong></td>
+                <td>{{ cat.parent.name|default:"—" }}</td>
+                <td>{{ cat.product_count }}</td>
+                <td>{{ cat.sort_order }}</td>
+                <td>
+                    {% if cat.is_active %}<span class="badge badge-success">فعال</span>
+                    {% else %}<span class="badge badge-canceled">غیرفعال</span>{% endif %}
+                </td>
+                <td><a href="{% url 'dashboard:category_edit' cat.id %}" class="btn btn-outline btn-sm">ویرایش</a></td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7" style="text-align:center;padding:40px;color:#6b7280">
+                    دسته‌بندی‌ای نیست. <a href="{% url 'dashboard:category_create' %}" style="color:#0e4d49;font-weight:700">اولین دسته را بساز</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

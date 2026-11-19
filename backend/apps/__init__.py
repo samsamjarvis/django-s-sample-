@@ -1,0 +1,1 @@
+"""Silver apps package."""

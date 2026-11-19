@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}پرداخت موفق — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section" style="text-align:center">
+    <div class="empty-state" style="padding:40px 24px">
+        <div class="empty-state__icon" style="color:var(--success);font-size:5rem">✓</div>
+        <h3>پرداخت با موفقیت انجام شد</h3>
+        <p>سفارش شما ثبت شد. کد پیگیری: <strong>{{ payment.ref_id }}</strong></p>
+        <p>شماره سفارش: <strong>{{ order.order_number }}</strong></p>
+        <p>مبلغ: {{ payment.amount|intcomma }} تومان</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
+            <a href="{% url 'orders:detail' order.order_number %}" class="btn btn-primary">مشاهده سفارش</a>
+            <a href="{% url 'products:list' %}" class="btn btn-outline">ادامه خرید</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

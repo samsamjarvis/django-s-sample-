@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}ثبت‌نام — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1 class="auth-title">ثبت‌نام</h1>
+        <p class="auth-subtitle">حساب کاربری خود را بسازید</p>
+
+        {% if form.non_field_errors %}<div class="alert alert-error" style="margin-bottom:16px">{{ form.non_field_errors.0 }}</div>{% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block">ساخت حساب</button>
+        </form>
+
+        <div class="auth-footer">
+            حساب دارید؟ <a href="{% url 'accounts:login' %}">ورود</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

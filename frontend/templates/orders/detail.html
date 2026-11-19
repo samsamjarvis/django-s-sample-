@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}سفارش {{ order.order_number }} — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="section-header">
+        <h1 class="section-title">سفارش {{ order.order_number }}</h1>
+        <span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span>
+    </div>
+
+    <div class="cart-grid">
+        <div class="cart-items">
+            <h2 style="font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:16px">اقلام سفارش</h2>
+            {% for item in order.items.all %}
+            <div class="cart-item">
+                <div class="cart-item__media">
+                    <div style="display:grid;place-items:center;height:100%;opacity:.3;font-size:2rem">💎</div>
+                </div>
+                <div class="cart-item__info">
+                    <h3>{{ item.product_name }}</h3>
+                    <p style="color:var(--text-muted);font-size:.85rem">{{ item.unit_price|intcomma }} × {{ item.quantity }}</p>
+                </div>
+                <div class="cart-item__price">{{ item.subtotal|intcomma }}</div>
+            </div>
+            {% endfor %}
+
+            <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+                <h3 style="font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:12px">تاریخچه وضعیت</h3>
+                {% for h in order.status_history.all %}
+                <div style="font-size:.9rem;padding:8px 0;border-bottom:1px dashed var(--border)">
+                    <strong>{{ h.to_status }}</strong> — <span style="color:var(--text-muted)">{{ h.created_at|date:"Y/m/d H:i" }}</span>
+                    {% if h.note %} — <span style="color:var(--text-muted)">{{ h.note }}</span>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <aside class="cart-summary">
+            <h2 style="font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:16px">خلاصه</h2>
+            <div class="cart-summary__row"><span>جمع اقلام</span><span>{{ order.subtotal_amount|intcomma }} ت</span></div>
+            {% if order.discount_amount %}<div class="cart-summary__row"><span>تخفیف</span><span>−{{ order.discount_amount|intcomma }}</span></div>{% endif %}
+            {% if order.shipping_amount %}<div class="cart-summary__row"><span>ارسال</span><span>{{ order.shipping_amount|intcomma }}</span></div>{% endif %}
+            <div class="cart-summary__total"><span>جمع کل</span><span>{{ order.total_amount|intcomma }} ت</span></div>
+
+            <div style="margin-top:16px;font-size:.9rem;line-height:1.9;color:var(--text-muted)">
+                <p><strong style="color:var(--text)">گیرنده:</strong> {{ order.shipping_full_name }}</p>
+                <p><strong style="color:var(--text)">تلفن:</strong> {{ order.shipping_phone }}</p>
+                <p><strong style="color:var(--text)">آدرس:</strong> {{ order.shipping_province }}، {{ order.shipping_city }} — {{ order.shipping_address }}</p>
+            </div>
+
+            {% if order.payment_status != "paid" and order.status == "pending" %}
+            <a href="{% url 'payment:initiate' order.id %}" class="btn btn-primary btn-block" style="margin-top:16px">پرداخت</a>
+            {% endif %}
+            {% if order.is_cancelable %}
+            <form method="post" action="{% url 'orders:cancel' order.order_number %}" style="margin-top:8px">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline btn-block" style="color:var(--danger);border-color:var(--danger)" onclick="return confirm('سفارش لغو شود؟')">لغو سفارش</button>
+            </form>
+            {% endif %}
+        </aside>
+    </div>
+</section>
+{% endblock %}

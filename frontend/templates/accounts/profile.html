@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}پروفایل — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card" style="max-width:600px">
+        <h1 class="auth-title">پروفایل</h1>
+        <p class="auth-subtitle">{{ user.email }}</p>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block">ذخیره</button>
+        </form>
+
+        <div style="display:flex;gap:8px;margin-top:16px">
+            <a href="{% url 'user_dashboard:home' %}" class="btn btn-outline btn-block">داشبورد</a>
+            <a href="{% url 'accounts:logout' %}?confirm=1" class="btn btn-outline btn-block" style="color:var(--danger);border-color:var(--danger)">خروج</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

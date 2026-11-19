@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}داشبورد من — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="user-dashboard">
+    <div class="user-dashboard__inner">
+
+        <header class="user-dashboard__header">
+            <h1 class="section-title">داشبورد من</h1>
+            <p class="section-subtitle">خلاصه حساب کاربری شما</p>
+        </header>
+
+        <!-- KPI cards -->
+        <div class="udash-stats">
+            <div class="udash-stat">
+                <div class="udash-stat__label">سفارش‌ها</div>
+                <div class="udash-stat__value">{{ recent_orders|length }}</div>
+            </div>
+            <div class="udash-stat">
+                <div class="udash-stat__label">آدرس‌ها</div>
+                <div class="udash-stat__value">{{ address_count }}</div>
+            </div>
+            {% if loyalty %}
+            <div class="udash-stat">
+                <div class="udash-stat__label">امتیاز وفاداری</div>
+                <div class="udash-stat__value">{{ loyalty.points }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Action buttons -->
+        <nav class="udash-actions" aria-label="دسترسی سریع">
+            <a href="/orders/" class="udash-action">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                <span>سفارش‌های من</span>
+            </a>
+            <a href="/customers/addresses/" class="udash-action">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>آدرس‌ها</span>
+            </a>
+            <a href="/crm/tickets/" class="udash-action">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>تیکت‌ها</span>
+            </a>
+            <a href="/crm/loyalty/" class="udash-action">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                <span>امتیاز</span>
+            </a>
+            <a href="/auth/profile/" class="udash-action">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>پروفایل</span>
+            </a>
+        </nav>
+
+        <!-- Recent orders -->
+        {% if recent_orders %}
+        <section class="udash-recent">
+            <h2 class="udash-recent__title">آخرین سفارش‌ها</h2>
+            <div class="udash-table-wrapper">
+                <table class="udash-table">
+                    <thead>
+                        <tr>
+                            <th>شماره</th>
+                            <th>مبلغ</th>
+                            <th>وضعیت</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in recent_orders %}
+                        <tr>
+                            <td data-label="شماره"><strong>{{ o.order_number }}</strong></td>
+                            <td data-label="مبلغ">{{ o.total_amount|intcomma }}</td>
+                            <td data-label="وضعیت">
+                                <span class="udash-badge udash-badge--{{ o.status }}">{{ o.get_status_display }}</span>
+                            </td>
+                            <td data-label="">
+                                <a href="/orders/{{ o.order_number }}/" class="udash-link">مشاهده</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

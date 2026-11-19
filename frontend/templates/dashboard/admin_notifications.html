@@ -1,0 +1,15 @@
+{% extends "dashboard/base_admin.html" %}
+{% block title %}اعلان‌ها{% endblock %}
+{% block page_title %}اعلان‌ها{% endblock %}
+{% block content %}
+{% for n in notifications %}
+<div class="admin-card" style="border-right:4px solid {% if n.is_read %}var(--border){% else %}var(--accent){% endif %}">
+    <h3 style="font-weight:700;margin-bottom:6px">{{ n.title }}</h3>
+    <p style="color:var(--text-muted);font-size:.9rem">{{ n.message }}</p>
+    {% if n.url %}<a href="{{ n.url }}" class="btn btn-outline btn-sm" style="margin-top:8px">مشاهده</a>{% endif %}
+    <p style="font-size:.8rem;color:var(--text-muted);margin-top:8px">{{ n.created_at|date:"Y/m/d H:i" }}</p>
+</div>
+{% empty %}
+<div class="empty-state"><div class="empty-state__icon">🔔</div><h3>اعلانی ندارید</h3></div>
+{% endfor %}
+{% endblock %}

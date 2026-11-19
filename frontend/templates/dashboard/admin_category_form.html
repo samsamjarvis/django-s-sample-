@@ -1,0 +1,69 @@
+{% extends "dashboard/base_admin.html" %}
+{% block title %}{% if category %}ویرایش دسته{% else %}دسته جدید{% endif %}{% endblock %}
+{% block page_title %}{% if category %}ویرایش دسته‌بندی{% else %}دسته‌بندی جدید{% endif %}{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-error" style="margin-bottom:16px">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px">
+        <div class="admin-card">
+            <div class="form-group">
+                <label class="form-label">نام دسته *</label>
+                {{ form.name }}
+                {% if form.name.errors %}<p style="color:#dc2626;font-size:.82rem;margin-top:4px">{{ form.name.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Slug (اختیاری)</label>
+                {{ form.slug }}
+                <small style="color:#6b7280;font-size:.78rem">اگر خالی باشد از نام ساخته می‌شود</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label">دسته والد (اختیاری)</label>
+                {{ form.parent }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">توضیحات</label>
+                {{ form.description }}
+            </div>
+        </div>
+
+        <div>
+            <div class="admin-card">
+                <h2 class="admin-card__title">تصویر دسته</h2>
+                {% if category and category.image %}
+                    <img src="{{ category.image.url }}" alt="" style="width:100%;max-width:200px;aspect-ratio:1/1;object-fit:cover;border-radius:50%;margin-bottom:12px;border:2px solid #ddd">
+                {% endif %}
+                <div class="form-group">
+                    <label class="form-label">آپلود تصویر</label>
+                    <input type="file" name="image" id="id_image" accept="image/*"
+                           style="width:100%;padding:10px;border:1.5px dashed #c9b78a;border-radius:8px;background:#fafaf8;cursor:pointer">
+                    <small style="color:#6b7280;font-size:.78rem;display:block;margin-top:6px">
+                        تصویر مربعی ۲۰۰×۲۰۰ توصیه می‌شود. در نوار دسته‌بندی صفحه اصلی دایره‌ای نمایش داده می‌شود.
+                    </small>
+                </div>
+                {% if form.image.errors %}<p style="color:#dc2626;font-size:.82rem">{{ form.image.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="admin-card">
+                <h2 class="admin-card__title">تنظیمات</h2>
+                <div class="form-group">
+                    <label class="form-label">ترتیب نمایش</label>
+                    {{ form.sort_order }}
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                    {{ form.is_active }} <span>فعال</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:24px">
+        <button type="submit" class="btn btn-primary">ذخیره</button>
+        <a href="{% url 'dashboard:category_list' %}" class="btn btn-outline">انصراف</a>
+    </div>
+</form>
+{% endblock %}

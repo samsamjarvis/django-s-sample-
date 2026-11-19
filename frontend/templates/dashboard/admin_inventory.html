@@ -1,0 +1,24 @@
+{% extends "dashboard/base_admin.html" %}
+{% block title %}انبار{% endblock %}
+{% block page_title %}مدیریت موجودی{% endblock %}
+{% block content %}
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead><tr><th>محصول</th><th>موجودی</th><th>رزرو</th><th>قابل فروش</th><th></th></tr></thead>
+        <tbody>
+        {% for s in page %}
+        <tr>
+            <td>{{ s.product.name }}</td>
+            <td>{{ s.quantity }}</td>
+            <td>{{ s.reserved_quantity }}</td>
+            <td>{% if s.available <= 3 %}<span class="badge badge-failed">{{ s.available }}</span>{% else %}{{ s.available }}{% endif %}</td>
+            <td><a href="{% url 'dashboard:stock_adjust' s.product.id %}" class="btn btn-outline btn-sm">تغییر</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">موجودی‌ای ثبت نشده</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include "dashboard/partials/pagination.html" with page=page %}
+{% endblock %}

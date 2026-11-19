@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}پرداخت ناموفق — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<section class="section" style="text-align:center">
+    <div class="empty-state" style="padding:40px 24px">
+        <div class="empty-state__icon" style="color:var(--danger);font-size:5rem">✕</div>
+        <h3>پرداخت انجام نشد</h3>
+        <p>{{ error|default:"پرداخت ناموفق بود." }}</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
+            {% if order %}<a href="{% url 'payment:initiate' order.id %}" class="btn btn-primary">تلاش مجدد</a>{% endif %}
+            <a href="{% url 'cart:view' %}" class="btn btn-outline">بازگشت به سبد</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
